@@ -12,12 +12,35 @@
       var socket = io("http://localhost:3000");
 
       $(document).ready(function() {
+        $("#button1").click(function() {
+          socket.emit("client-send-data", "Hello")
+        })
 
+        $("#button2").click(function() {
+          let data = [
+            {
+              "id": 1,
+              "name": "Javascript",
+              "price": "3000"
+
+            },
+            {
+              "id": 2,
+              "name": "CSS",
+              "price": "5000"
+            }
+          ]
+          socket.emit("client-send-object", JSON.stringify(data))
+        })
       });
     </script>
   </head>
   <body>
-    Hello Man
-     
+    Demo nodejs
+
+    <div>
+      <button id="button1"> Send Variable </button>
+      <button id="button2"> Send Object </button>
+    </div>
   </body>
 </html>

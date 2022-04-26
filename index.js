@@ -14,10 +14,22 @@ io.on("connection", function(socket) {
   socket.on("disconnect", function() {
     console.log(socket.id + ": disconnected!")
   })
+
+  socket.on("client-send-data", function(data) {
+    console.log(`${data}`);
+  })
+
+  socket.on("client-send-object", function(data) {
+
+    console.log(JSON.parse(data));
+
+  })
 })
 
 app.get("/", function(req, res) {
-  res.render("home")    // giong y chang tren trong views/home.ejs
+  res.render("home")    // giong y chang ten trong views/home.ejs
 })
 
 console.log(`Socket.IO server running at: http://localhost:3000/`)
+
+// https://www.youtube.com/watch?v=ovAeRVUiuvA
