@@ -1,104 +1,149 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Socket.IO</title>
-    <script src="jquery.js"></script>
 
-    <!-- <script src="./node_modules/socket.io/client-dist/socket.io.js"></script> -->
-    <script src="socket.io/socket.io.js"></script>  
-    <!-- http://localhost:3000/socket.io/socket.io.js : when server run check it -->
-    
-    <script>
-      var socket = io("http://localhost:3000");
+<head>
+  <title>Socket.IO</title>
 
-      $(document).ready(function() {
+  <style>
+    .dots-2 {
+      width: 50px;
+      height: 24px;
+      background:
+        radial-gradient(circle closest-side, currentColor 90%, #0000) 0% 50%,
+        radial-gradient(circle closest-side, currentColor 90%, #0000) 50% 50%,
+        radial-gradient(circle closest-side, currentColor 90%, #0000) 100% 50%;
+      background-size: calc(100%/3) 12px;
+      background-repeat: no-repeat;
+      animation: d2 1s infinite linear;
+    }
 
-        var count = 1;
-        $("#button1").click(function() {
+    @keyframes d2 {
+      20% {
+        background-position: 0% 0%, 50% 50%, 100% 50%
+      }
 
-          // client send to server
-          socket.emit("client-send-data", `Hello: ${count++}`)
-        })
+      40% {
+        background-position: 0% 100%, 50% 0%, 100% 50%
+      }
 
-        $("#button2").click(function() {
-          let data = [
-            {
-              "id": 1,
-              "name": "Javascript",
-              "price": "3000"
+      60% {
+        background-position: 0% 50%, 50% 100%, 100% 0%
+      }
 
-            },
-            {
-              "id": 2,
-              "name": "CSS",
-              "price": "5000"
-            }
-          ]
+      80% {
+        background-position: 0% 50%, 50% 50%, 100% 100%
+      }
+    }
+  </style>
+  <script src="jquery.js"></script>
 
-          // client send to server
-          socket.emit("client-send-object", JSON.stringify(data))
-        })
-      });
+  <!-- <script src="./node_modules/socket.io/client-dist/socket.io.js"></script> -->
+  <script src="socket.io/socket.io.js"></script>
+  <!-- http://localhost:3000/socket.io/socket.io.js : when server run check it -->
 
-      // received data from server
-      socket.on("server-response-data", function(data) {
-        $("#content1").append(`<li> ${data} </li>`)
+  <script>
+    var socket = io("http://localhost:3000");
+
+    $(document).ready(function () {
+
+      var count = 1;
+      $("#button1").click(function () {
+
+        // client send to server
+        socket.emit("client-send-data", `Hello: ${count++}`)
       })
 
-      socket.on("server-response-object", function(data) {
+      $("#button2").click(function () {
+        let data = [
+          {
+            "id": 1,
+            "name": "Javascript",
+            "price": "3000"
 
-        const courses = JSON.parse(data);
+          },
+          {
+            "id": 2,
+            "name": "CSS",
+            "price": "5000"
+          }
+        ]
 
-        let html = [];
-        let temp = "";
-        for (const course of courses) {
-            temp = course['id'] + '-' + course['name'] + '-' + course['price'];
-            html.push(temp);
-        }
-        $("#content2").append(`<li> ${html.join(', ')} </li>`)
+        // client send to server
+        socket.emit("client-send-object", JSON.stringify(data))
       })
+    });
 
-      socket.on("server-response-typing-event", function(data) {
+    // received data from server
+    socket.on("server-response-data", function (data) {
+      $("#content1").append(`<li> ${data} </li>`)
+    })
 
-      })
+    socket.on("server-response-object", function (data) {
 
-      socket.on("server-response-stop-typing-event", function(data) {
+      const courses = JSON.parse(data);
 
-      })
+      let html = [];
+      let temp = "";
+      for (const course of courses) {
+        temp = course['id'] + '-' + course['name'] + '-' + course['price'];
+        html.push(temp);
+      }
+      $("#content2").append(`<li> ${html.join(', ')} </li>`)
+    })
 
-      $('#txtMessage').focusin(function() {
-        console.log("change!!!")
-        socket.emit("typing-event");
-      })
+    socket.on("server-response-typing-event", function (data) {
 
-      $('#txtMessage').focusout(function() {
-        console.log("change!!!")
-        socket.emit("stop-typing-event");
-      })
+      console.log(data);
+      $('#show-typing-message').text(data)
+      $('#show-typing-message').show();
+    });
 
-    </script>
-  </head>
-  <body>
-    Demo nodejs
+    socket.on("server-response-stop-typing-event", function (data) {
+      $('#show-typing-message').hide();
+    })
 
-    <div>
-      <button id="button1"> Send Variable </button>
-      <button id="button2"> Send Object </button>
+  </script>
+</head>
+
+<body>
+  Demo nodejs
+
+  <div>
+    <button id="button1"> Send Variable </button>
+    <button id="button2"> Send Object </button>
+  </div>
+
+  <div class="group">
+    <input id="txtMessage" type="text" />
+    <div style="display: none"  id="show-typing-message">
+      <div class="dots-2"> </div>
     </div>
+   
+  </div>
 
-    <div>
-      <input id="txtMessage" type="text" /> 
-    </div>
+  <div>
+    <ul id="content1"> </ul>
+  </div>
 
-    <div>
-      <ul id="content1"> </ul>
-    </div>
+  <hr />
 
-    <hr />
+  <div>
+    <ul id="content2"> </ul>
+  </div>
 
-    <div>
-      <ul id="content2"> </ul>
-    </div>
+  <script>
 
-  </body>
+    $('#txtMessage').focusin(function () {
+      socket.emit("typing-event", "");
+    });
+
+
+    $('#txtMessage').focusout(function () {
+      console.log("change!!!")
+      socket.emit("stop-typing-event", "");
+    })
+
+  </script>
+</body>
+
 </html>

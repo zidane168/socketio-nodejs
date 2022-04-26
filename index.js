@@ -37,13 +37,13 @@ io.on("connection", function(socket) {
     // io.to("socketid").emit();
   })
 
-  socket.on("typing-event", function() {
+  socket.on("typing-event", function(temp) {
     const data = socket.id + " is typing!";
     console.log(data)
     socket.broadcast.emit("server-response-typing-event", data);
   })
 
-  socket.on("stop-typing-event", function() {
+  socket.on("stop-typing-event", function(temp) {
     const data = socket.id + " is stop!";
     console.log(data)
     socket.broadcast.emit("server-response-stop-typing-event", data);
