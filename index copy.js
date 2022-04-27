@@ -3,46 +3,20 @@ var app = express();
 app.use(express.static("public"))
 app.set("view engine", "ejs")
 app.set("views", "./views")
+app.use(cors());
 
-// app.use(cors());
-
-// import sequelize from './app/db';
-// import models from '../models';
-// import db from '../db';
-
-const sequelize = require('./app/db')
-const models = require('./app/models')
-const db = require('./app/db')
-const Members = models.initModels(db).members;
-
-// connect mysql
-const findTop = async () => {
-  console.log('Members ----')
-  const data = await Members.findAll();
-  // console.log(data);
-  console.log("All users:", JSON.stringify(data));
-  console.log('Members ----')
-}
-
-findTop();
 
 var server = require("http").Server(app)
 var io = require("socket.io")(server)
+// server.listen(3000)
 
 let PORT = 3000
-server.listen(PORT)
 
 io.on("connection", function(socket) {
-  console.log("user connect: " + socket.id + " - " + socket.client.conn.server.clientsCount)
-  socket.numLogin = socket.count() + 1;
+  console.log("user connect: " + socket.id)
 
   socket.on("disconnect", function() {
     console.log(socket.id + ": disconnected!")
-  })
-
-  socket.on('create-post-room', function(data) {
-    socket.join(data),
-    socket.room = data;
   })
 
   socket.on("client-send-data", function(data) {
@@ -55,7 +29,7 @@ io.on("connection", function(socket) {
     // socket.emit("server-response-data", data);
 
     // send all client receive (exclude myself)
-    socket.broadcast.emit("server-response-data", data2);
+    socket.broadcast.emit("server-response-data", data);
   })
 
   socket.on("client-send-object", function(data) {
@@ -86,15 +60,9 @@ app.get("/", function(req, res) {
 
 // https://www.youtube.com/watch?v=ovAeRVUiuvA
 
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}.`);
-// });
+const db = require("./models");
+db.sequelize.sync();
 
-const initServer = async () => {
-  await sequelize.sync();
-  // server.listen(port, '0.0.0.0', () =>
-  //   console.log(`server is running ${env} on port ${port}`)
-  // );
-};
-
-initServer();
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
