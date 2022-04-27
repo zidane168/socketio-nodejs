@@ -33,16 +33,43 @@ let PORT = 3000
 server.listen(PORT)
 
 io.on("connection", function(socket) {
-  console.log("user connect: " + socket.id + " - " + socket.client.conn.server.clientsCount)
-  socket.numLogin = socket.count() + 1;
+  console.log("user connect: " + socket.id)
+  // console.log( socket );
+  
+  // show list of rooms in server
+  // console.log(socket.adapter.rooms);
 
   socket.on("disconnect", function() {
     console.log(socket.id + ": disconnected!")
   })
 
-  socket.on('create-post-room', function(data) {
-    socket.join(data),
+  // socket tao ra, se tao ra id, tao ra room luon, (ten room giong voi socket.id)
+
+  // ko co ham tao room, xoa room, 
+  // chi co join, leave room
+  socket.on('create-room', function(data) {
+
+    console.log("you request create room: ", data);
+    socket.join(data)
+    // socket.leave(data): socket cuoi cung leave se huy room
+    console.log(socket.adapter.rooms);
     socket.room = data;
+    var arr = []
+  
+    let rooms = Array.from(socket.adapter.rooms)
+
+    for (let r in rooms) {
+      console.log(r[0]);
+
+      let numUserInRooms = Array.from(r[0])
+      for (let num in numUserInRooms) {
+        console.log(r[0]);
+      }
+    }
+
+   
+
+    // io.socket.emit("server-send-rooms", arr)
   })
 
   socket.on("client-send-data", function(data) {

@@ -71,36 +71,45 @@
         // client send to server
         socket.emit("client-send-object", JSON.stringify(data))
       })
+
+
+      // received data from server
+      socket.on("server-response-data", function (data) {
+        $("#content1").append(`<li> ${data} </li>`)
+      })
+
+      socket.on("server-response-object", function (data) {
+
+        const courses = JSON.parse(data);
+
+        let html = [];
+        let temp = "";
+        for (const course of courses) {
+          temp = course['id'] + '-' + course['name'] + '-' + course['price'];
+          html.push(temp);
+        }
+        $("#content2").append(`<li> ${html.join(', ')} </li>`)
+      })
+
+      socket.on("server-response-typing-event", function (data) {
+
+        console.log(data);
+        $('#show-typing-message').text(data)
+        $('#show-typing-message').show();
+      });
+
+      socket.on("server-response-stop-typing-event", function (data) {
+        $('#show-typing-message').hide();
+      })
+
+      $('#btnCreateRoom').click(function() {
+        socket.emit('create-room', 123)
+      })
+
+
     });
 
-    // received data from server
-    socket.on("server-response-data", function (data) {
-      $("#content1").append(`<li> ${data} </li>`)
-    })
-
-    socket.on("server-response-object", function (data) {
-
-      const courses = JSON.parse(data);
-
-      let html = [];
-      let temp = "";
-      for (const course of courses) {
-        temp = course['id'] + '-' + course['name'] + '-' + course['price'];
-        html.push(temp);
-      }
-      $("#content2").append(`<li> ${html.join(', ')} </li>`)
-    })
-
-    socket.on("server-response-typing-event", function (data) {
-
-      console.log(data);
-      $('#show-typing-message').text(data)
-      $('#show-typing-message').show();
-    });
-
-    socket.on("server-response-stop-typing-event", function (data) {
-      $('#show-typing-message').hide();
-    })
+        
 
   </script>
 </head>
@@ -120,6 +129,11 @@
     </div>
    
   </div>
+
+  <div>
+    <button id="btnCreateRoom"> Create Room </button>
+  </div>
+
 
   <div>
     <ul id="content1"> </ul>
