@@ -1,0 +1,17 @@
+
+
+"when user click subscribe"
+Client -> socket.emit("click-subscribe", 1) -> subscribe post with id = 1
+-> Server will store to db -> Client will store in session with post subscribe
+
+"subscribe text='Vinhome'"
+Client -> socket.emit("client-post", 'id=123&text="Vinhome") -> Server broadcast to client all info, 
+-> Client -> will get the info and get check in session is it need to subscribe will display the red button
+
+"current view"
+Client enter web -> send socket to server -> socket.emit("current-view", 'id=post') 
+-> Server store the id post into cache, count the number of connection. -> get `count` variable -> send to Client 
+-> socket.broadcast.emit("current-view", count); -> display in server
+
+"enter website" 
+-> login / disconnect with server

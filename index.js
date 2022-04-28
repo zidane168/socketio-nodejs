@@ -32,10 +32,13 @@ var io = require("socket.io")(server)
 let PORT = 3000
 server.listen(PORT)
 
+let userId = [];
+
 io.on("connection", function(socket) {
   console.log("user connect: " + socket.id)
+  userId.push(socket.id);
+
   // console.log( socket );
-  
   // show list of rooms in server
   // console.log(socket.adapter.rooms);
 
@@ -52,22 +55,25 @@ io.on("connection", function(socket) {
     console.log("you request create room: ", data);
     socket.join(data)
     // socket.leave(data): socket cuoi cung leave se huy room
-    console.log(socket.adapter.rooms);
+   
     socket.room = data;
-    var arr = []
+
+    for (let user of userId) {
+      console.log(user);
+    }
   
     let rooms = Array.from(socket.adapter.rooms)
+    console.log(rooms);
+    for (let r of rooms) {  // let of -> get value  / let in -> get id
+      console.log("Room: ", r[0]);
 
-    for (let r in rooms) {
-      console.log(r[0]);
-
-      let numUserInRooms = Array.from(r[0])
-      for (let num in numUserInRooms) {
-        console.log(r[0]);
+      let userInRoom = Array.from(r[1])
+      for (let u of userInRoom) {
+        console.log("Users in room: ", u);
       }
-    }
 
-   
+      console.log(" ======== ");
+    }
 
     // io.socket.emit("server-send-rooms", arr)
   })
