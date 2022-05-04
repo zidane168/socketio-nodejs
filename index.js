@@ -113,8 +113,9 @@ io.on("connection", function(socket) {
   })
 })
 
+// khi client chay thi ko can ham nay:
 app.get("/", function(req, res) {
-  res.render("home")    // giong y chang ten trong views/home.ejs
+  res.render("home")    // giong y chang ten trong views/home.ejs 
 })
 
 // https://www.youtube.com/watch?v=ovAeRVUiuvA
