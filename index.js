@@ -88,7 +88,7 @@ io.on("connection", function(socket) {
     // socket.emit("server-response-data", data);
 
     // send all client receive (exclude myself)
-    socket.broadcast.emit("server-response-data", data2);
+    socket.broadcast.emit("server-response-data", data);
   })
 
   socket.on("client-send-object", function(data) {
